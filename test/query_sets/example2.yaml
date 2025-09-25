@@ -1,0 +1,5 @@
+queries:
+  - text: "List all the clusters"
+    repeat: 2
+  - text: "Which cluster has lowest CPU utilisation in last month?"
+    repeat: 2
