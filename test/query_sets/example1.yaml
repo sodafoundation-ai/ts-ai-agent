@@ -1,0 +1,5 @@
+queries:
+  - text: "What is the average CPU usage of datacenter cluster?"
+    repeat: 1
+  - text: "Which cluster has highest CPU utilisation over past 5 days?"
+    repeat: 2
