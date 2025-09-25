@@ -1,0 +1,3 @@
+modes:
+  - name: DYNAMIC_PROMPT
+    module: pkg.copilot.DP_logic.dp_logic
