@@ -1,2 +1,2 @@
-base_url: "http://127.0.0.1/prometheus"
+base_url: "http://127.0.0.1:9090"
 auth: null

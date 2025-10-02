@@ -1,0 +1,4 @@
+url: "http://localhost:8086"
+token: null  # Set your InfluxDB token here
+org: "default"
+bucket: "default"
