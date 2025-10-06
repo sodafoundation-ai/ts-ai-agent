@@ -47,7 +47,6 @@ def load_config():
     return prom_config, influx_config
 
 def initialize_clients():
-    """Initialize database clients"""
     global prometheus_client, influxdb_client
     
     prom_config, influx_config = load_config()
@@ -63,7 +62,7 @@ def initialize_clients():
         except Exception as e:
             print(f"Failed to initialize Prometheus client: {e}")
     
-    # Initialize InfluxDB client
+
     if influx_config.get('url'):
         try:
             influxdb_client = InfluxDBClient(
