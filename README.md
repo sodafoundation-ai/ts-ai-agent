@@ -12,6 +12,13 @@ An initial implementation of the TSDB copilot to test multiple frameworks and th
 Follow the official Prometheus installation guide to get started:
 (https://prometheus.io/docs/prometheus/latest/getting_started/)
 
+### An available LLM served through Ollama  
+- This project relies on Ollama to run large language models locally.  
+- Install Ollama by following the instructions:
+   (https://docs.ollama.com/linux)  
+- Make sure the Ollama service is running (default endpoint: `http://127.0.0.1:11434`).  
+- Model should be downloaded and running in Ollama.
+
 ## 2. Install Dependencies
 
 ```bash
