@@ -12,8 +12,9 @@ def chunk_text_file(filepath):
 
 def run_onboarding():
     print("\n--- Dynamic Prompt Framework Onboarding ---")
-    source_path = input("Enter path to your data/metrics file (e.g., config/metrics.txt): ").strip()
-    output_path = "pkg/copilot/DP_logic/DynamicPrompt/config/embeddings/embeddings.npz"
+    source_path = input("Enter path to your data/metrics file (e.g., config/metrics.txt, Please enter to use default path): ").strip()
+    source_path = source_path if source_path else "./config/metrics.txt"
+    output_path = "./pkg/copilot/DP_logic/DynamicPrompt/config/embeddings/embeddings.npz"
 
     if not Path(source_path).exists():
         print(f"Error: file {source_path} does not exist.")
