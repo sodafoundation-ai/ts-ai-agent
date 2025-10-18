@@ -91,7 +91,17 @@ Prometheus instances are now accessible at:
 
 ## 🚀 Running the MCP Server
 
-Start the MCP server: fastmcp run server.py:app --transport http --port 8001
+Start the MCP server: 
+
+```bash
+fastmcp run server.py:app --transport http --port 8001
+```
+
+Run the client
+
+```bash
+python3 client_dynamic.py
+```
 
 ## 🧪 Running Tests
 
