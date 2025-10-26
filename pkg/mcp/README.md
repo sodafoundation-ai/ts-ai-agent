@@ -34,6 +34,27 @@ You’ll need the following installed:
 
 ---
 
+### 3. Practical Minimal Setup
+
+If you’re running:
+
+- Ollama with a 7B model (default: llama3 or mistral)  
+- FastMCP server and client on the same machine  
+
+#### ✅ CPU-Only Setup
+- **CPU:** 8 cores (Intel i7 / AMD Ryzen 7 or better)  
+- **RAM:** 16 GB  
+- **Storage:** SSD (10+ GB free for model files)  
+- **OS:** Ubuntu 22.04+ / macOS / WSL2 on Windows  
+- **Performance:** Each query takes ~5–15 seconds depending on model size  
+
+#### ⚡ GPU-Accelerated Setup (Recommended)
+- **GPU:** NVIDIA RTX 3060 (12 GB VRAM) or better  
+- **CPU:** 6+ cores  
+- **RAM:** 16 GB  
+- **Speed:** 5×–10× faster responses from Ollama
+
+
 ## 🧰 Configuration
 
 Edit `config/{}_config.yaml` as follows:
