@@ -33,16 +33,22 @@ pip install -r requirements.txt
 - **Ollama endpoint**: Set in `config/ollama_config.yaml`
 - **Agent modes**: can be configured in `config/agent_modes.yaml`
 
-## 4. Run CLI
+## 4. Agent Modes
+Currently we have
+- `DYNAMIC_PROMPT`: Advanced prompt building with context and examples -> generate PromQL -> HTTP request to Prometheus endpoint
+Any other modes like MCP or any other can be added.
+
+## 5. Run CLI
+
+#### Pre-requisite
+Please follow the steps to configure Agent mode before running the cli.
+- `DYNAMIC_PROMPT`: Follow [Configure DYNAMIC_PROMPT](#8-dynamic-prompt-mode)
+
+#### Running the solution
 
 ```bash
 python pkg/cli.py   --query-set test/query_sets/example1.yaml   --copilot DYNAMIC_PROMPT   --prometheus-config config/prometheus_config.yaml
 ```
-
-## 5. Agent Modes
-Currently we have
-- `DYNAMIC_PROMPT`: Advanced prompt building with context and examples -> generate PromQL -> HTTP request to Prometheus endpoint
-Any other modes like MCP or any other can be added.
 
 ## 6. Query Set Format
 
@@ -76,6 +82,9 @@ Which cluster has highest CPU utilisation in last month?:
 To onboard domain knowledge for better prompts:
 
 ```bash
+# To embed the mappings with current set of metrics available in prometheus.
+curl <prometheus_url>/metrics > ./config/metrics.txt
+
 python pkg/copilot/DP_logic/DynamicPrompt/onboarding_cli.py
 ```
 
@@ -89,3 +98,4 @@ TEMPLATE_PATH=/Path to your/pkg/copilot/DP_logic/DynamicPrompt/config/template_s
 OVERRIDE_PATH=/Path to your/pkg/copilot/DP_logic/DynamicPrompt/config/overrides.json
 EXAMPLES_PATH=/Path to your/pkg/copilot/DP_logic/DynamicPrompt/config/golden_examples.json
 INFO_PATH=/Path to your/pkg/copilot/DP_logic/DynamicPrompt/config/additional_context.json
+```
