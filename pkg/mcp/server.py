@@ -105,7 +105,7 @@ def current_metric_for_pods(
 def top_n_pods_by_metric(
     metric_name: str = "container_cpu_usage_seconds_total", 
     top_n: int = 5, 
-    window: str = "5m"
+    window: str = "30m"
 ) -> Dict[str, Any]:
     
     if not prometheus_clients:
@@ -245,30 +245,85 @@ def recent_pod_events(limit: int = 10) -> Dict[str, Any]:
 
 
 @app.tool()
-def node_disk_usage() -> Dict[str, Any]:
+def node_disk_usage(window_minutes: int = 20) -> Dict[str, Any]:
+    """
+    Summarized node disk usage (%) for important mount points across Prometheus clients.
+
+    Args:
+        window_minutes (int): Lookback window in minutes (default: 20).
+
+    Returns:
+        Dict[str, Any]: Aggregated disk usage per node.
+    """
+
     if not prometheus_clients:
         return {"error": "No Prometheus clients initialized"}
 
+    end_time = datetime.utcnow()
+    start_time = end_time - timedelta(minutes=window_minutes)
+    step = "1m"  # 1-minute resolution
+
+    important_mounts = {"/", "/var/lib", "/data"}
     all_results = {}
+
     for prom_name, client in prometheus_clients.items():
         try:
             query = """
             100 * (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} 
                         / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"}))
             """
-            result = client.custom_query(query=query)
+
+            result = client.custom_query_range(
+                query=query.strip(),
+                start_time=start_time,
+                end_time=end_time,
+                step=step
+            )
+
             disk_usage = []
             for item in result:
                 metric = item.get("metric", {})
-                node = metric.get("instance")
                 mount = metric.get("mountpoint", "")
-                usage = float(item.get("value", [0, "0"])[1])
-                disk_usage.append({"node": node, "mount": mount, "disk_usage_percent": round(usage, 2)})
-            all_results[prom_name] = disk_usage
+                if mount not in important_mounts:
+                    continue
+
+                node = metric.get("node", "unknown")
+                cluster = metric.get("cluster", "unknown")
+                region = metric.get("region", "unknown")
+                environment = metric.get("environment", "unknown")
+
+                # Average usage across time range
+                values = [float(v[1]) for v in item.get("values", [])]
+                if not values:
+                    continue
+                avg_usage = sum(values) / len(values)
+
+                disk_usage.append({
+                    "node": node,
+                    "mount": mount,
+                    "cluster": cluster,
+                    "region": region,
+                    "environment": environment,
+                    "avg_disk_usage_percent": round(avg_usage, 2),
+                    "max_disk_usage_percent": round(max(values), 2),
+                })
+
+            disk_usage.sort(key=lambda x: x["max_disk_usage_percent"], reverse=True)
+
+            all_results[prom_name] = {
+                "query": query.strip(),
+                "window_minutes": window_minutes,
+                "timestamp": end_time.isoformat(),
+                "top_nodes": disk_usage[:10],
+            }
+
         except Exception as e:
             all_results[prom_name] = {"error": str(e)}
 
-    return {"node_disk_usage_per_prometheus": all_results, "timestamp": datetime.now().isoformat()}
+    return {
+        "node_disk_usage_per_prometheus": all_results,
+        "fetched_at": datetime.utcnow().isoformat(),
+    }
 
 
 @app.tool()
@@ -288,11 +343,11 @@ def describe_cluster_health() -> Dict[str, Any]:
             failed = summary.get("Failed", 0)
 
             if failed > 0:
-                status_msg = f"⚠️ {failed} pods are failing. {running}/{total} pods are running."
+                status_msg = f"{failed} pods are failing. {running}/{total} pods are running."
             elif pending > 0:
-                status_msg = f"⏳ {pending} pods are pending. {running}/{total} are running fine."
+                status_msg = f"{pending} pods are pending. {running}/{total} are running fine."
             else:
-                status_msg = f"✅ All systems nominal: {running}/{total} pods are healthy."
+                status_msg = f"All systems nominal: {running}/{total} pods are healthy."
 
             all_results[prom_name] = {"summary": summary, "message": status_msg}
         except Exception as e:
