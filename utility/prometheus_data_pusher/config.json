@@ -1,0 +1,12 @@
+{
+  "prometheus_url": "http://localhost:9090/api/v1/write",
+  "auth_token": null,
+  "num_clusters": 5,
+  "nodes_per_cluster": 10,
+  "namespaces_per_cluster": 10,
+  "pods_per_namespace": 10,
+  "containers_per_pod": 1,
+  "scrape_interval": 120,
+  "batch_size": 50000,
+  "days_of_history": 2
+}
