@@ -1,3 +1,5 @@
+# SODA TS AI Agent is part of SODA Contexture Project. It is the first prototype developement and research.
+---
 # soda-ts-ai-agent
 
 soda-ts-ai-agent is an open source AI agent for time series data
